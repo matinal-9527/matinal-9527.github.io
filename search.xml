@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello Friend</title>
-    <url>/2021/05/18/hello-world/</url>
-    <content><![CDATA[<p>记录自己的生活点滴，我相信有一天一定会有一个人很想知道我的过去，很想了解我的—切。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>建造者模式</title>
     <url>/2021/05/18/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<h3 id="什么叫建造者？他的应用场景又是什么呢？"><a href="#什么叫建造者？他的应用场景又是什么呢？" class="headerlink" title="什么叫建造者？他的应用场景又是什么呢？"></a>什么叫建造者？他的应用场景又是什么呢？</h3><blockquote>
@@ -61,6 +55,12 @@
         <tag>Java</tag>
         <tag>设计模式</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Hello Friend</title>
+    <url>/2021/05/18/hello-world/</url>
+    <content><![CDATA[<p>记录自己的生活点滴，我相信有一天一定会有一个人很想知道我的过去，很想了解我的—切。</p>
+]]></content>
   </entry>
   <entry>
     <title>Spring Boot</title>
