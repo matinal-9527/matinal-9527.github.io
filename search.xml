@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello Friend</title>
-    <url>/2021/05/18/hello-world/</url>
-    <content><![CDATA[<p>记录自己的生活点滴，我相信有一天一定会有一个人很想知道我的过去，很想了解我的—切。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>建造者模式</title>
     <url>/2021/05/18/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<h3 id="什么叫建造者？他的应用场景又是什么呢？"><a href="#什么叫建造者？他的应用场景又是什么呢？" class="headerlink" title="什么叫建造者？他的应用场景又是什么呢？"></a>什么叫建造者？他的应用场景又是什么呢？</h3><blockquote>
@@ -61,6 +55,102 @@
         <tag>Java</tag>
         <tag>设计模式</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>策略模式</title>
+    <url>/2021/06/11/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<p>最近有一个在面试中有被问到一个代码优化问题：如何有效的去避免代码中一长串的<strong>if else</strong>判断或者<strong>switch</strong>条件判断？针对更多的回答就是合理的去使用设计来规避这个问题。</p>
+<p>在设计模式中，可以使用<strong>工厂模式</strong>或者<strong>策略模式</strong>来处理这类问题，今天先使用策略模式来解决这类问题。</p>
+<p>那么工厂模式和策略模式有什么区别呢？</p>
+<blockquote>
+<ul>
+<li>工厂模式是属于创建型设计模式，主要用来针对不同类型创建不同的对象，达到解偶类对象。</li>
+<li>策略模式是属于行为型设计模式，主要是针对不同的策略做出对应行为，达到行为解偶</li>
+</ul>
+</blockquote>
+<p><img src="/images/cl1.jpg"></p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>什么是策略模式？它的原理实现是怎么样的？</p>
+<blockquote>
+<p>定义一系列算法，封装每个算法，并使他们可以互换，不同的策略可以让算法独立于使用它们的客户而变化。以上定义来自设计模式之美</p>
+</blockquote>
+<p>感觉有点抽象？那就来看一张结构图吧</p>
+<p><img src="/images/cl2.jpg"></p>
+<blockquote>
+<ul>
+<li>Strategy（抽象策略）：抽象策略类，并且定义策略执行入口</li>
+<li>ConcreteStrategy（具体策略）：实现抽象策略，实现algorithm方法</li>
+<li>Context（环境）：运行特定的策略类。</li>
+</ul>
+</blockquote>
+<p>这么看结构其实还是不复杂的，而且跟状态模式类似。</p>
+<p>那么这个代码怎么实现？</p>
+<p>举个例子，汽车大家肯定都不陌生，汽车的不同档(concreteStrategy）就好比不同的策略，驾驶者选择几档则汽车按几档的速度前进，整个选择权在驾驶者（context）手中。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GearStrategy</span></span>&#123;</span><br><span class="line">    <span class="comment">// 定义策略执行方法</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">algorithm</span><span class="params">(String param)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先还是先定义抽象策略</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GearStrategyOne</span> <span class="keyword">implements</span> <span class="title">GearStrategy</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">algorithm</span><span class="params">(String param)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前档位&quot;</span> + param);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其次定义具体档位策略，实现algorithm方法。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Context</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String,GearStrategy&gt; strategies = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="comment">//第一种写法</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        strategies.put(<span class="string">&quot;one&quot;</span>,<span class="keyword">new</span> GearStrategyOne());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span> GearStrategy <span class="title">getStrategy</span><span class="params">(String type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type==<span class="keyword">null</span>||type.isEmpty())&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;type should not be empty.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> strategies.get(type);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二种写法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> GearStrategy <span class="title">getStrategySecond</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="keyword">null</span> || type.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;type should not be empty.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (type.equals(<span class="string">&quot;one&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> GearStrategyOne();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 测试结果</span></span><br><span class="line">        GearStrategy strategyOne = Context.getStrategy(<span class="string">&quot;one&quot;</span>);</span><br><span class="line">        strategyOne.algorithm(<span class="string">&quot;1档&quot;</span>);</span><br><span class="line">        <span class="comment">// 结果：当前档位1档</span></span><br><span class="line">        GearStrategy strategyTwo = Context.getStrategySecond(<span class="string">&quot;one&quot;</span>);</span><br><span class="line">        strategyTwo.algorithm(<span class="string">&quot;1档&quot;</span>);</span><br><span class="line">        <span class="comment">// 结果：当前档位1档</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后就是实现运行时环境（Context），你可以定义成StrategyFactory，但都是一个意思。</p>
+<p>在main方法里面的测试demo，可以看到通过不同的type类型，可以实现不同的策略，这就是策略模式主要思想。</p>
+<p>在Context里面定义了两种写法：</p>
+<blockquote>
+<ul>
+<li>第一种是维护了一个strategies的Map容器。用这种方式就需要判断每种策略是否可以共享使用，它只是作为算法的实现。</li>
+<li>第二种是直接通过有状态的类，每次根据类型new一个新的策略类对象。这个就需要根据实际业务场景去做的判断。</li>
+</ul>
+</blockquote>
+<h2 id="框架的应用"><a href="#框架的应用" class="headerlink" title="框架的应用"></a>框架的应用</h2><p>策略模式在框架中也在一个很常见的地方体现出来了，而且大家肯定都有使用过。</p>
+<p>那就是JDK中的线程池<strong>ThreadPoolExecutor</strong></p>
+<p><img src="/images/cl3.jpg"></p>
+<p>首先都是类似于这样定义一个线程池，里面实现线程池的异常策略。</p>
+<p>这个线程池的异常策略就是用的策略模式的思想。</p>
+<p><img src="/images/cl4.jpg"></p>
+<p>在源码中有RejectedExecutionHandler这个抽象异常策略接口，同时它也有四种拒绝策略。关系图如下：</p>
+<p><img src="/images/cl5.jpg"></p>
+<p><img src="/images/cl6.jpg"></p>
+<p>这就是在框架中的体现了，根据自己的业务场景，合理的选择线程池的异常策略。</p>
+<h2 id="业务改造举例"><a href="#业务改造举例" class="headerlink" title="业务改造举例"></a>业务改造举例</h2><p>在真实的业务场景中策略模式也还是应用很多的。</p>
+<p>在社交电商中分享商品是一个很重要的环节，假设现在要我们实现一个分享图片功能，比如当前有 单商品、多商品、下单、会场、邀请、小程序链接等等多种分享场景。</p>
+<p><img src="/images/cl7.jpg"></p>
+<p>针对上线这个流程图先用if else语句做一个普通业务代码判断，就像下面的这中方式：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingleItemShare</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 单商品</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">algorithm</span><span class="params">(String param)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前分享图片是&quot;</span> + param);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiItemShare</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 多商品</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">algorithm</span><span class="params">(String param)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前分享图片是&quot;</span> + param);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderItemShare</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 下单</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">algorithm</span><span class="params">(String param)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前分享图片是&quot;</span> + param);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShareFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Integer shareType = <span class="number">1</span>;</span><br><span class="line">       <span class="comment">// 测试业务逻辑</span></span><br><span class="line">        <span class="keyword">if</span> (shareType.equals(ShareType.SINGLE.getCode())) &#123;</span><br><span class="line">            SingleItemShare singleItemShare = <span class="keyword">new</span> SingleItemShare();</span><br><span class="line">            singleItemShare.algorithm(<span class="string">&quot;单商品&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shareType.equals(ShareType.MULTI.getCode())) &#123;</span><br><span class="line">            MultiItemShare multiItemShare = <span class="keyword">new</span> MultiItemShare();</span><br><span class="line">            multiItemShare.algorithm(<span class="string">&quot;多商品&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shareType.equals(ShareType.ORDER.getCode())) &#123;</span><br><span class="line">            OrderItemShare orderItemShare = <span class="keyword">new</span> OrderItemShare();</span><br><span class="line">            orderItemShare.algorithm(<span class="string">&quot;下单&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">&quot;未知分享类型&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// .....省略更多分享场景</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">ShareType</span> </span>&#123;</span><br><span class="line">        SINGLE(<span class="number">1</span>, <span class="string">&quot;单商品&quot;</span>),</span><br><span class="line">        MULTI(<span class="number">2</span>, <span class="string">&quot;多商品&quot;</span>),</span><br><span class="line">        ORDER(<span class="number">3</span>, <span class="string">&quot;下单&quot;</span>);</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 场景对应的编码</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> Integer code;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 业务场景描述</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> String desc;</span><br><span class="line">        ShareType(Integer code, String desc) &#123;</span><br><span class="line">            <span class="keyword">this</span>.code = code;</span><br><span class="line">            <span class="keyword">this</span>.desc = desc;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Integer <span class="title">getCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> code;</span><br><span class="line">        &#125;</span><br><span class="line">       <span class="comment">// 省略 get set 方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里大家可以看到每新加一种分享类型，就需要加一次if else 判断，当如果有十几种场景的时候那代码整体就会非常的长，看起来给人的感觉也不是很舒服。</p>
+<p>接下来就看看如何用策略模式进行重构：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ShareStrategy</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义分享策略执行方法</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shareAlgorithm</span><span class="params">(String param)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderItemShare</span> <span class="keyword">implements</span> <span class="title">ShareStrategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shareAlgorithm</span><span class="params">(String param)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前分享图片是&quot;</span> + param);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 省略 MultiItemShare以及SingleItemShare策略</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 分享工厂</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShareFactory</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 定义策略枚举</span></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">ShareType</span> </span>&#123;</span><br><span class="line">        SINGLE(<span class="string">&quot;single&quot;</span>, <span class="string">&quot;单商品&quot;</span>),</span><br><span class="line">        MULTI(<span class="string">&quot;multi&quot;</span>, <span class="string">&quot;多商品&quot;</span>),</span><br><span class="line">        ORDER(<span class="string">&quot;order&quot;</span>, <span class="string">&quot;下单&quot;</span>);</span><br><span class="line">        <span class="comment">// 场景对应的编码</span></span><br><span class="line">        <span class="keyword">private</span> String code;</span><br><span class="line">       </span><br><span class="line">        <span class="comment">// 业务场景描述</span></span><br><span class="line">        <span class="keyword">private</span> String desc;</span><br><span class="line">        ShareType(String code, String desc) &#123;</span><br><span class="line">            <span class="keyword">this</span>.code = code;</span><br><span class="line">            <span class="keyword">this</span>.desc = desc;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> code;</span><br><span class="line">        &#125;</span><br><span class="line">       <span class="comment">// 省略 get set 方法</span></span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">// 定义策略map缓存</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String, ShareStrategy&gt; shareStrategies = <span class="keyword">new</span>       HashMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        shareStrategies.put(<span class="string">&quot;order&quot;</span>, <span class="keyword">new</span> OrderItemShare());</span><br><span class="line">        shareStrategies.put(<span class="string">&quot;single&quot;</span>, <span class="keyword">new</span> SingleItemShare());</span><br><span class="line">        shareStrategies.put(<span class="string">&quot;multi&quot;</span>, <span class="keyword">new</span> MultiItemShare());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取指定策略</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ShareStrategy <span class="title">getShareStrategy</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="keyword">null</span> || type.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;type should not be empty.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> shareStrategies.get(type);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 测试demo</span></span><br><span class="line">        String shareType = <span class="string">&quot;order&quot;</span>;</span><br><span class="line">        ShareStrategy shareStrategy = ShareFactory.getShareStrategy(shareType);</span><br><span class="line">        shareStrategy.shareAlgorithm(<span class="string">&quot;order&quot;</span>);</span><br><span class="line">        <span class="comment">// 输出结果：当前分享图片是order</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里策略模式就已经改造完了。在client请求端，根本看不到那么多的if else判断，只需要传入对应的策略方式即可，这里我们维护了一个策略缓存map，在直接调用的ShareFactory获取策略的时候就直接是从换种获取策略类对象。</p>
+<p>这就已经达到了行为解偶的思想。同时也避免了长串的if else 判断。</p>
+<p>优点：</p>
+<blockquote>
+<ul>
+<li>算法策略可以自由实现切换</li>
+<li>扩展性好，加一个策略，只需要增加一个类</li>
+</ul>
+</blockquote>
+<p>缺点：</p>
+<blockquote>
+<ul>
+<li>策略类数量多</li>
+<li>需要维护一个策略枚举，让别人知道你当前具有哪些策略</li>
+</ul>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><p>以上就讲完了策略模式，整体看上去其实还是比较简单的，还是那句话学习设计模式我们还是要学习每种设计模式的思想，任何一种设计模式存在即合理。当然也不要因为设计模式而设计代码，那样反而得不偿失。</p>
+<p>本文借鉴了敖丙的策略模式文章….</p>
+]]></content>
+      <tags>
+        <tag>Java</tag>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello Friend</title>
+    <url>/2021/05/18/hello-world/</url>
+    <content><![CDATA[<p>记录自己的生活点滴，我相信有一天一定会有一个人很想知道我的过去，很想了解我的—切。</p>
+]]></content>
   </entry>
   <entry>
     <title>Spring Boot</title>
